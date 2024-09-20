@@ -1,0 +1,21 @@
+--build model
+CREATE OR REPLACE MODEL `DA04_K296.phishing_boostedtree_classifier_model`
+OPTIONS(model_type='BOOSTED_TREE_CLASSIFIER',
+        NUM_PARALLEL_TREE = 2,
+        max_tree_depth = 4,
+        -- BOOSTER_TYPE = 'GBTREE',
+        -- EARLY_STOP = TRUE,       
+        INPUT_LABEL_COLS = ['phishing']
+  ) AS
+SELECT 
+  url_length, phishing
+FROM
+    `my-data-403501.DA04_K296.phishing`;
+
+
+--Predict
+SELECT  *
+FROM ML.PREDICT (MODEL `DA04_K296.phishing_boostedtree_classifier_model`,
+(SELECT url_length, phishing
+FROM `my-data-403501.DA04_K296.phishing`
+));
